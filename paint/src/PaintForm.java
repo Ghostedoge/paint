@@ -1,6 +1,8 @@
 package paint;
 import java.awt.Color;
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 public class PaintForm extends javax.swing.JFrame {
 
     /**
@@ -42,11 +44,13 @@ setLocationRelativeTo(null);
         colorButton = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
         clearButton = new javax.swing.JButton();
+        importButton = new javax.swing.JButton();
+        exportButton = new javax.swing.JButton();
         drawingPanel = new paint.DrawingPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        topPanel.setBackground(new java.awt.Color(204, 204, 204));
+        topPanel.setBackground(new java.awt.Color(117, 115, 115));
 
         toolCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ołówek", "Prostokąt", "Linia", "Okrąg", "Wielokąt" }));
         toolCombo.addActionListener(new java.awt.event.ActionListener() {
@@ -86,6 +90,22 @@ setLocationRelativeTo(null);
             }
         });
         topPanel.add(clearButton);
+
+        importButton.setText("Importuj");
+        importButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importButtonActionPerformed(evt);
+            }
+        });
+        topPanel.add(importButton);
+
+        exportButton.setText("Eksportuj");
+        exportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportButtonActionPerformed(evt);
+            }
+        });
+        topPanel.add(exportButton);
 
         getContentPane().add(topPanel, java.awt.BorderLayout.PAGE_START);
         getContentPane().add(drawingPanel, java.awt.BorderLayout.CENTER);
@@ -143,6 +163,35 @@ if (chosen != null) {
 ((DrawingPanel)drawingPanel).clearCanvas();
     }//GEN-LAST:event_clearButtonActionPerformed
 
+    private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importButtonActionPerformed
+                                       
+    JFileChooser chooser = new JFileChooser();
+    int result = chooser.showOpenDialog(this);
+    if (result == JFileChooser.APPROVE_OPTION) {
+        java.io.File file = chooser.getSelectedFile();
+        ((DrawingPanel)drawingPanel).importImage(file);
+    }
+    }//GEN-LAST:event_importButtonActionPerformed
+
+    private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
+            JFileChooser chooser = new JFileChooser();
+    chooser.setDialogTitle("Zapisz projekt jako PNG");
+
+    int result = chooser.showSaveDialog(this);
+    if (result == JFileChooser.APPROVE_OPTION) {
+        java.io.File file = chooser.getSelectedFile();
+
+        if (!file.getName().toLowerCase().endsWith(".png")) {
+            file = new java.io.File(file.getAbsolutePath() + ".png");
+        }
+
+        ((DrawingPanel)drawingPanel).saveImage(file);
+        JOptionPane.showMessageDialog(this,
+                "Projekt zapisany pomyślnie:\n" + file.getAbsolutePath(),
+                "Sukces", JOptionPane.INFORMATION_MESSAGE);
+    }
+    }//GEN-LAST:event_exportButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -182,6 +231,8 @@ if (chosen != null) {
     private javax.swing.JButton clearButton;
     private javax.swing.JButton colorButton;
     private javax.swing.JPanel drawingPanel;
+    private javax.swing.JButton exportButton;
+    private javax.swing.JButton importButton;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JComboBox<String> thicknessCombo;
     private javax.swing.JComboBox<String> toolCombo;

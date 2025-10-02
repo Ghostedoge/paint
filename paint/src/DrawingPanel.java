@@ -6,8 +6,24 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+
 
 public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener, ComponentListener {
+
+public void saveImage(java.io.File file) {
+    try {
+        javax.imageio.ImageIO.write(canvas, "png", file);
+    } catch (Exception ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(this,
+                "Nie udało się zapisać obrazu",
+                "Błąd", JOptionPane.ERROR_MESSAGE);
+    }
+}
+
 
     public enum Tool {PENCIL, LINE, RECT, OVAL, POLYGON}
 
@@ -17,7 +33,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     private Tool currentTool = Tool.PENCIL;
     private int currentThickness = 1;
 
-    // Polygon
     private List<Point> polygonPoints = new ArrayList<>();
     private boolean drawingPolygon = false;
 
@@ -28,7 +43,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         addComponentListener(this);
     }
 
-    // -------------------- Settery --------------------
     public void setTool(Tool t) { this.currentTool = t; }
     public void setThickness(int t) { this.currentThickness = Math.max(1, t); }
     public void setColor(Color c) { if (c != null) this.currentColor = c; }
@@ -42,6 +56,28 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         g.dispose();
         repaint();
     }
+    
+    
+        public void importImage(File file) {
+        try {
+            BufferedImage img = javax.imageio.ImageIO.read(file);
+            if (img == null) return;
+
+            ensureCanvas();
+            Graphics2D g = canvas.createGraphics();
+
+            g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
+
+            g.dispose();
+            repaint();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Nie udało się wczytać obrazu",
+                    "Błąd", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 
     private void ensureCanvas() {
         if (canvas == null) {
@@ -55,14 +91,12 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         }
     }
 
-    // -------------------- Paint --------------------
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         ensureCanvas();
         g.drawImage(canvas, 0, 0, null);
 
-        // LINE, RECT, OVAL podgląd
         if (startPoint != null && lastPoint != null && currentTool != Tool.PENCIL && currentTool != Tool.POLYGON) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setStroke(new BasicStroke(currentThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
@@ -83,21 +117,20 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
             g2.dispose();
         }
 
-        // -------------------- Polygon podgląd --------------------
         if (currentTool == Tool.POLYGON && drawingPolygon && polygonPoints.size() > 0) {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setStroke(new BasicStroke(currentThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             g2.setColor(currentColor);
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
 
-            // linie między punktami
+
             for (int i = 0; i < polygonPoints.size() - 1; i++) {
                 Point p1 = polygonPoints.get(i);
                 Point p2 = polygonPoints.get(i + 1);
                 g2.drawLine(p1.x, p1.y, p2.x, p2.y);
             }
 
-            // linia od ostatniego punktu do kursora myszy
+
             if (lastPoint != null) {
                 Point pLast = polygonPoints.get(polygonPoints.size() - 1);
                 g2.drawLine(pLast.x, pLast.y, lastPoint.x, lastPoint.y);
@@ -107,7 +140,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         }
     }
 
-    // -------------------- Rysowanie na stałe --------------------
     private void drawFinalShape(Point a, Point b) {
         ensureCanvas();
         Graphics2D g = canvas.createGraphics();
@@ -142,7 +174,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         repaint();
     }
 
-    // -------------------- Mouse --------------------
     @Override
     public void mousePressed(MouseEvent e) {
         ensureCanvas();
@@ -220,14 +251,13 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     @Override public void mouseEntered(MouseEvent e) {}
     @Override public void mouseExited(MouseEvent e) {}
 
-    // -------------------- Component resize --------------------
     @Override
     public void componentResized(ComponentEvent e) {
         if (canvas == null) { ensureCanvas(); return; }
         int w = Math.max(1, getWidth());
         int h = Math.max(1, getHeight());
 
-        // jeśli nowe okno mniejsze – zostaw stary canvas
+
         if (w <= canvas.getWidth() && h <= canvas.getHeight()) {
             repaint();
             return;
