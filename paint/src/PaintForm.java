@@ -52,6 +52,7 @@ setLocationRelativeTo(null);
 
         topPanel.setBackground(new java.awt.Color(117, 115, 115));
 
+        toolCombo.setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
         toolCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ołówek", "Prostokąt", "Linia", "Okrąg", "Wielokąt" }));
         toolCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -60,6 +61,7 @@ setLocationRelativeTo(null);
         });
         topPanel.add(toolCombo);
 
+        thicknessCombo.setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
         thicknessCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1px", "2px", "3px", "4px", "5px" }));
         thicknessCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -68,6 +70,7 @@ setLocationRelativeTo(null);
         });
         topPanel.add(thicknessCombo);
 
+        colorButton.setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
         colorButton.setText("Kolor");
         colorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -83,6 +86,7 @@ setLocationRelativeTo(null);
         });
         topPanel.add(jTextField1);
 
+        clearButton.setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
         clearButton.setText("Wyczyść");
         clearButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -91,6 +95,7 @@ setLocationRelativeTo(null);
         });
         topPanel.add(clearButton);
 
+        importButton.setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
         importButton.setText("Importuj");
         importButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -99,6 +104,7 @@ setLocationRelativeTo(null);
         });
         topPanel.add(importButton);
 
+        exportButton.setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
         exportButton.setText("Eksportuj");
         exportButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -126,9 +132,12 @@ switch (idx) {
     }//GEN-LAST:event_toolComboActionPerformed
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+
+        
 Color chosen = JColorChooser.showDialog(this, "Wybierz kolor", ((DrawingPanel)drawingPanel).getColor());
 if (chosen != null) {
     ((DrawingPanel)drawingPanel).setColor(chosen);
+    
 
     String hex = String.format("#%02X%02X%02X", chosen.getRed(), chosen.getGreen(), chosen.getBlue());
     jTextField1.setText(hex);
